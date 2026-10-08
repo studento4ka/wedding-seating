@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    background-color: #F8F5EC;
+    color: #4A5A3A;
+    font-family: 'Montserrat', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  h1, h2, h3, .font-serif-wedding {
+    font-family: 'Playfair Display', serif;
+  }
+
+  .font-handwriting {
+    font-family: 'Allura', cursive;
+  }
+}
+
+/* Анімація Хвилі для столів 1-6 */
+@keyframes wavePulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  }
+  50% {
+    transform: scale(1.04);
+    border-color: #D880AD;
+    box-shadow: 0 4px 12px rgba(216, 128, 173, 0.25);
+  }
+}
+
+.animate-wave-1 { animation: wavePulse 3s infinite 0.1s; }
+.animate-wave-2 { animation: wavePulse 3s infinite 0.4s; }
+.animate-wave-3 { animation: wavePulse 3s infinite 0.7s; }
+.animate-wave-4 { animation: wavePulse 3s infinite 1.0s; }
+.animate-wave-5 { animation: wavePulse 3s infinite 1.3s; }
+.animate-wave-6 { animation: wavePulse 3s infinite 1.6s; }
