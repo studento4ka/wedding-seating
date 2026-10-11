@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { PRESIDIUM, TABLES } from './data/weddingData'; // Переконайся, що шлях до файлу з даними правильний
+import { PRESIDIUM, TABLES } from './data/weddingData';
 import { Search, Sparkles, X } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -8,14 +8,14 @@ export default function App() {
   const [selectedGuest, setSelectedGuest] = useState(null);
   const [activeTableId, setActiveTableId] = useState(null);
 
-  // Формуємо плоский список усіх гостей для пошуку
   const allGuests = useMemo(() => {
     const list = [];
-    
-    if (PRESIDIUM && PRESIDIUM.guests) {
-      PRESIDIUM.guests.forEach(guestName => {
+
+    if (PRESIDIUM && PRESIDIUM.roles) {
+      PRESIDIUM.roles.forEach(person => {
         list.push({
-          name: guestName,
+          name: person.name,
+          role: person.title,
           tableId: 'presidium',
           tableName: 'Стіл Молодят',
           tableNumber: 0
@@ -28,6 +28,7 @@ export default function App() {
         table.guests.forEach(guestName => {
           list.push({
             name: guestName,
+            role: null,
             tableId: table.id,
             tableName: table.title,
             tableNumber: table.number
@@ -50,7 +51,7 @@ export default function App() {
     setSelectedGuest(guest);
     setActiveTableId(guest.tableId);
     setSearchQuery('');
-    
+
     confetti({
       particleCount: 50,
       spread: 60,
@@ -66,7 +67,7 @@ export default function App() {
 
   return (
     <div className="max-w-md mx-auto min-h-screen bg-[#F8F5EC] text-[#4A5A3A] pb-12 px-3 relative overflow-hidden font-sans">
-      
+
       {/* ПОДВІЙНА РАМКА ВЕСІЛЬНОЇ ПОЛІГРАФІЇ */}
       <div className="my-3 p-2.5 border-2 border-[#D880AD]/40 rounded-3xl relative bg-[#F8F5EC]">
         <div className="border border-[#7A886A]/50 rounded-2xl p-3 relative pt-4">
@@ -94,7 +95,7 @@ export default function App() {
                 className="w-full pl-11 pr-10 py-3 bg-white/90 rounded-xl border-2 border-[#D880AD]/40 focus:outline-none focus:border-[#D880AD] focus:ring-1 focus:ring-[#D880AD] text-sm text-[#4A5A3A] placeholder-[#7A886A]/60 shadow-xs"
               />
               {searchQuery && (
-                <button 
+                <button
                   onClick={() => setSearchQuery('')}
                   className="absolute right-3 p-1 text-[#D880AD]"
                 >
@@ -114,6 +115,7 @@ export default function App() {
                   >
                     <div>
                       <div className="font-medium text-sm text-[#4A5A3A]">{item.name}</div>
+                      {item.role && <div className="text-[10px] text-[#7A886A]">{item.role}</div>}
                     </div>
                     <span className="text-xs font-serif font-semibold bg-[#D880AD] text-white px-2.5 py-0.5 rounded-full shadow-xs">
                       {item.tableNumber === 0 ? 'Молодята' : `Стіл №${item.tableNumber}`}
@@ -136,10 +138,10 @@ export default function App() {
                     {selectedGuest.name}
                   </h2>
                   <p className="text-xs text-[#F8F5EC]/90 mt-0.5 font-light">
-                    {selectedGuest.tableName}
+                    {selectedGuest.tableName} {selectedGuest.role ? `• ${selectedGuest.role}` : ''}
                   </p>
                 </div>
-                <button 
+                <button
                   onClick={clearSelection}
                   className="bg-white/20 p-1 rounded-full text-white"
                 >
@@ -156,7 +158,7 @@ export default function App() {
                 Схема залу
               </span>
               {activeTableId && (
-                <button 
+                <button
                   onClick={() => setActiveTableId(null)}
                   className="text-xs text-[#D880AD] font-semibold underline underline-offset-2"
                 >
@@ -179,10 +181,10 @@ export default function App() {
                       isDimmed ? 'opacity-30' : 'opacity-100'
                     }`}
                   >
-                    <div 
+                    <div
                       className={`w-full h-32 rounded-lg border-2 transition-all duration-300 flex flex-col justify-between py-2 items-center ${
-                        isActive 
-                          ? 'bg-[#7A886A] border-[#4A5A3A] text-white shadow-md scale-105' 
+                        isActive
+                          ? 'bg-[#7A886A] border-[#4A5A3A] text-white shadow-md scale-105'
                           : 'bg-[#F8F5EC] border-[#D880AD]/40 hover:border-[#D880AD]'
                       }`}
                     >
@@ -190,7 +192,7 @@ export default function App() {
                         <div className={`w-1 h-2.5 rounded-full ${isActive ? 'bg-[#D880AD]' : 'bg-[#D880AD]/60'}`}></div>
                         <div className={`w-1 h-2.5 rounded-full ${isActive ? 'bg-[#D880AD]' : 'bg-[#D880AD]/60'}`}></div>
                       </div>
-                      
+
                       <div className={`w-5 h-5 rounded-full flex items-center justify-center font-serif font-bold text-xs ${
                         isActive ? 'bg-[#D880AD] text-white' : 'bg-[#D880AD]/20 text-[#4A5A3A]'
                       }`}>
@@ -214,7 +216,7 @@ export default function App() {
             </div>
 
             {/* СТІЛ МОЛОДЯТ */}
-            <div 
+            <div
               onClick={() => setActiveTableId(activeTableId === 'presidium' ? null : 'presidium')}
               className={`cursor-pointer transition-all duration-300 rounded-xl py-2.5 px-3 border-2 text-center ${
                 activeTableId === 'presidium'
@@ -240,22 +242,27 @@ export default function App() {
                     Стіл Молодят <span className="text-[#D880AD] text-xs">♡</span>
                   </h3>
                   <span className="text-[10px] bg-[#7A886A]/15 text-[#4A5A3A] font-semibold border border-[#7A886A]/30 px-2.5 py-0.5 rounded-full shadow-2xs">
-                    {PRESIDIUM.guests.length} осіб
+                    {PRESIDIUM.roles.length} осіб
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-1.5">
-                  {PRESIDIUM.guests.map((name, idx) => {
-                    const isSelected = selectedGuest?.name === name;
+                  {PRESIDIUM.roles.map((person, idx) => {
+                    const isSelected = selectedGuest?.name === person.name;
                     return (
-                      <div 
+                      <div
                         key={idx}
                         className={`p-2 rounded-lg text-xs transition ${
-                          isSelected 
-                            ? 'bg-[#D880AD] text-white font-bold ring-2 ring-[#4A5A3A]' 
+                          isSelected
+                            ? 'bg-[#D880AD] text-white font-bold ring-2 ring-[#4A5A3A]'
+                            : person.isMain
+                            ? 'bg-white border border-[#D880AD] font-semibold text-[#4A5A3A]'
                             : 'bg-white/80 text-[#4A5A3A]'
                         }`}
                       >
-                        <div className="truncate font-medium">{name}</div>
+                        <div className={`text-[9px] font-medium leading-tight ${isSelected ? 'text-white/80' : 'text-[#D880AD]'}`}>
+                          {person.title}
+                        </div>
+                        <div className="truncate mt-0.5 font-medium">{person.name}</div>
                       </div>
                     );
                   })}
