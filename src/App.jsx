@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { PRESIDIUM, TABLES } from './data/weddingData';
+import { PRESIDIUM, TABLES } from './data/weddingData'; // Переконайся, що шлях до файлу з даними правильний
 import { Search, Sparkles, X } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -8,29 +8,33 @@ export default function App() {
   const [selectedGuest, setSelectedGuest] = useState(null);
   const [activeTableId, setActiveTableId] = useState(null);
 
+  // Формуємо плоский список усіх гостей для пошуку
   const allGuests = useMemo(() => {
     const list = [];
-    PRESIDIUM.roles.forEach(person => {
-      list.push({
-        name: person.name,
-        role: person.title,
-        tableId: 'presidium',
-        tableName: 'Стіл Молодят',
-        tableNumber: 0
-      });
-    });
-
-    TABLES.forEach(table => {
-      table.guests.forEach(guestName => {
+    
+    if (PRESIDIUM && PRESIDIUM.guests) {
+      PRESIDIUM.guests.forEach(guestName => {
         list.push({
           name: guestName,
-          role: 'Гість',
-          tableId: table.id,
-          tableName: table.title,
-          tableNumber: table.number
+          tableId: 'presidium',
+          tableName: 'Стіл Молодят',
+          tableNumber: 0
         });
       });
-    });
+    }
+
+    if (TABLES) {
+      TABLES.forEach(table => {
+        table.guests.forEach(guestName => {
+          list.push({
+            name: guestName,
+            tableId: table.id,
+            tableName: table.title,
+            tableNumber: table.number
+          });
+        });
+      });
+    }
 
     return list;
   }, []);
@@ -61,9 +65,9 @@ export default function App() {
   };
 
   return (
-    <div className="max-w-md mx-auto min-h-screen bg-[#F8F5EC] text-[#4A5A3A] pb-12 px-3 relative overflow-hidden">
+    <div className="max-w-md mx-auto min-h-screen bg-[#F8F5EC] text-[#4A5A3A] pb-12 px-3 relative overflow-hidden font-sans">
       
-      {/* ПОДВІЙНА РАМКА ЯК НА ВЕСІЛЬНІЙ ПОЛІГРАФІЇ */}
+      {/* ПОДВІЙНА РАМКА ВЕСІЛЬНОЇ ПОЛІГРАФІЇ */}
       <div className="my-3 p-2.5 border-2 border-[#D880AD]/40 rounded-3xl relative bg-[#F8F5EC]">
         <div className="border border-[#7A886A]/50 rounded-2xl p-3 relative pt-4">
 
@@ -72,7 +76,7 @@ export default function App() {
             <div className="text-[11px] uppercase tracking-[0.3em] font-medium text-[#7A886A] mb-1">
               Знайдіть своє
             </div>
-            <h1 className="text-3xl font-serif-wedding font-bold text-[#4A5A3A] tracking-wider uppercase">
+            <h1 className="text-3xl font-serif font-bold text-[#4A5A3A] tracking-wider uppercase">
               Місце
             </h1>
             <div className="text-[#D880AD] text-base mt-1">♡</div>
@@ -110,9 +114,8 @@ export default function App() {
                   >
                     <div>
                       <div className="font-medium text-sm text-[#4A5A3A]">{item.name}</div>
-                      <div className="text-[10px] text-[#7A886A]">{item.role}</div>
                     </div>
-                    <span className="text-xs font-serif-wedding font-semibold bg-[#D880AD] text-white px-2.5 py-0.5 rounded-full shadow-xs">
+                    <span className="text-xs font-serif font-semibold bg-[#D880AD] text-white px-2.5 py-0.5 rounded-full shadow-xs">
                       {item.tableNumber === 0 ? 'Молодята' : `Стіл №${item.tableNumber}`}
                     </span>
                   </button>
@@ -121,7 +124,7 @@ export default function App() {
             )}
           </div>
 
-          {/* Картка знайдомого гостя */}
+          {/* Картка знайденого гостя */}
           {selectedGuest && (
             <div className="mb-5 p-3.5 bg-gradient-to-r from-[#D880AD] to-[#C86F9C] text-white rounded-xl shadow-md relative overflow-hidden border border-[#D880AD]">
               <div className="flex justify-between items-start relative z-10">
@@ -129,7 +132,7 @@ export default function App() {
                   <div className="flex items-center gap-1 text-[#F8F5EC] text-[11px] font-medium mb-0.5">
                     <Sparkles className="w-3.5 h-3.5 text-[#F8F5EC]" /> Ваше місце підсвічено!
                   </div>
-                  <h2 className="text-xl font-serif-wedding font-bold tracking-wide">
+                  <h2 className="text-xl font-serif font-bold tracking-wide">
                     {selectedGuest.name}
                   </h2>
                   <p className="text-xs text-[#F8F5EC]/90 mt-0.5 font-light">
@@ -178,8 +181,6 @@ export default function App() {
                   >
                     <div 
                       className={`w-full h-32 rounded-lg border-2 transition-all duration-300 flex flex-col justify-between py-2 items-center ${
-                        activeTableId === null ? `animate-wave-${table.number}` : ''
-                      } ${
                         isActive 
                           ? 'bg-[#7A886A] border-[#4A5A3A] text-white shadow-md scale-105' 
                           : 'bg-[#F8F5EC] border-[#D880AD]/40 hover:border-[#D880AD]'
@@ -190,7 +191,7 @@ export default function App() {
                         <div className={`w-1 h-2.5 rounded-full ${isActive ? 'bg-[#D880AD]' : 'bg-[#D880AD]/60'}`}></div>
                       </div>
                       
-                      <div className={`w-5 h-5 rounded-full flex items-center justify-center font-serif-wedding font-bold text-xs ${
+                      <div className={`w-5 h-5 rounded-full flex items-center justify-center font-serif font-bold text-xs ${
                         isActive ? 'bg-[#D880AD] text-white' : 'bg-[#D880AD]/20 text-[#4A5A3A]'
                       }`}>
                         {table.number}
@@ -223,7 +224,7 @@ export default function App() {
                   : 'bg-gradient-to-r from-[#F8F5EC] via-[#FDF2F7] to-[#F8F5EC] border-[#D880AD] text-[#4A5A3A] hover:border-[#D880AD]'
               }`}
             >
-              <span className="font-serif-wedding font-bold text-base tracking-widest uppercase">
+              <span className="font-serif font-bold text-base tracking-widest uppercase">
                 Стіл Молодят
               </span>
             </div>
@@ -235,29 +236,26 @@ export default function App() {
             {(activeTableId === null || activeTableId === 'presidium') && (
               <div className="bg-[#F8F5EC] border-2 border-[#D880AD]/60 rounded-xl p-3 shadow-2xs">
                 <div className="flex justify-between items-center mb-2 pb-1.5 border-b border-[#D880AD]/30">
-                  <h3 className="font-serif-wedding font-bold text-base text-[#4A5A3A] tracking-wide flex items-center gap-1.5">
+                  <h3 className="font-serif font-bold text-base text-[#4A5A3A] tracking-wide flex items-center gap-1.5">
                     Стіл Молодят <span className="text-[#D880AD] text-xs">♡</span>
                   </h3>
                   <span className="text-[10px] bg-[#7A886A]/15 text-[#4A5A3A] font-semibold border border-[#7A886A]/30 px-2.5 py-0.5 rounded-full shadow-2xs">
-                    6 осіб
+                    {PRESIDIUM.guests.length} осіб
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-1.5">
-                  {PRESIDIUM.roles.map((person, idx) => {
-                    const isSelected = selectedGuest?.name === person.name;
+                  {PRESIDIUM.guests.map((name, idx) => {
+                    const isSelected = selectedGuest?.name === name;
                     return (
                       <div 
                         key={idx}
                         className={`p-2 rounded-lg text-xs transition ${
                           isSelected 
                             ? 'bg-[#D880AD] text-white font-bold ring-2 ring-[#4A5A3A]' 
-                            : person.isMain
-                            ? 'bg-white border border-[#D880AD] font-semibold text-[#4A5A3A]'
                             : 'bg-white/80 text-[#4A5A3A]'
                         }`}
                       >
-                        <div className="text-[9px] text-[#D880AD] font-medium leading-tight">{person.title}</div>
-                        <div className="truncate mt-0.5 font-medium">{person.name}</div>
+                        <div className="truncate font-medium">{name}</div>
                       </div>
                     );
                   })}
@@ -269,8 +267,9 @@ export default function App() {
             {TABLES.map((table) => {
               if (activeTableId !== null && activeTableId !== table.id) return null;
 
-              const col1 = table.guests.slice(0, 7);
-              const col2 = table.guests.slice(7, 14);
+              const halfLength = Math.ceil(table.guests.length / 2);
+              const col1 = table.guests.slice(0, halfLength);
+              const col2 = table.guests.slice(halfLength);
 
               return (
                 <div
@@ -278,11 +277,11 @@ export default function App() {
                   className="bg-[#F8F5EC] border border-[#7A886A]/40 rounded-xl p-3 shadow-2xs transition-all"
                 >
                   <div className="flex justify-between items-center mb-2 pb-1.5 border-b border-[#7A886A]/20">
-                    <h3 className="font-serif-wedding font-bold text-base text-[#4A5A3A]">
+                    <h3 className="font-serif font-bold text-base text-[#4A5A3A]">
                       {table.title}
                     </h3>
                     <span className="text-[10px] bg-[#7A886A]/15 text-[#4A5A3A] font-semibold border border-[#7A886A]/30 px-2.5 py-0.5 rounded-full">
-                      14 осіб
+                      {table.guests.length} осіб
                     </span>
                   </div>
 
@@ -330,7 +329,7 @@ export default function App() {
 
           {/* ПІДПИС «Юра та Іванка» */}
           <footer className="mt-6 text-center">
-            <div className="font-handwriting text-3xl text-[#4A5A3A] tracking-wider">
+            <div className="font-serif italic text-2xl text-[#4A5A3A] tracking-wider">
               Юра та Іванка
             </div>
             <div className="text-[#D880AD] text-sm mt-0.5">♡</div>
