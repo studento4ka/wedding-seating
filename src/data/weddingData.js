@@ -3,7 +3,7 @@ export const PRESIDIUM = {
   name: 'Стіл Молодят',
   roles: [
     { title: 'Наречений', name: 'Юра Савюк', isMain: true },
-    { title: 'Наречена', name: 'Іванка Савюк', isMain: true },
+    { title: 'Наречена', name: 'Іванна Савюк', isMain: true },
     { title: 'Старша дружка', name: 'Ангеліна Сад' },
     { title: 'Старший друг', name: 'Вячеслав Цикалюк' },
     { title: 'Менша дружка', name: 'Вікторія Голян' },
